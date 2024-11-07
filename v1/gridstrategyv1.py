@@ -6,32 +6,13 @@ import sys
 from dataclasses import dataclass, field
 from typing import Optional, Tuple
 
-import pandas as pd
-import yaml
 from binance import AsyncClient
 from binance.enums import *
 from binance.exceptions import BinanceAPIException, BinanceRequestException
 from binance.helpers import round_step_size
 
-# -----------------------------
-# Configuration Management
-# -----------------------------
-
-def load_config(config_path: str) -> dict:
-    """
-    Load configuration parameters from a YAML file.
-
-    Args:
-        config_path (str): Path to the configuration YAML file.
-
-    Returns:
-        dict: Dictionary containing configuration parameters.
-    """
-    with open(config_path, 'r') as file:
-        return yaml.safe_load(file)
-
-# Load the configuration from 'config.yaml'
-config = load_config('config.yaml')  # Ensure you have a config.yaml file in the same directory
+import pandas as pd
+import key_file as k  # Ensure this file is secure and not tracked by version control
 
 # -----------------------------
 # Logging Configuration
@@ -44,29 +25,23 @@ logger.setLevel(logging.INFO)  # Set the default logging level to INFO
 # Define the log message format
 formatter = logging.Formatter('%(asctime)s %(levelname)s:%(message)s')
 
-# -----------------------------
-# Console Handler
-# -----------------------------
+# Prevent adding multiple handlers if they already exist
+if not logger.hasHandlers():
+    # Console Handler
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.INFO)  # Set logging level for console
+    ch.setFormatter(formatter)  # Apply the formatter to console handler
+    logger.addHandler(ch)  # Add console handler to the logger
 
-# Create a stream handler to output logs to the console
-ch = logging.StreamHandler(sys.stdout)
-ch.setLevel(logging.INFO)  # Set logging level for console
-ch.setFormatter(formatter)  # Apply the formatter to console handler
-logger.addHandler(ch)  # Add console handler to the logger
-
-# -----------------------------
-# File Handler with Rotation
-# -----------------------------
-
-# Create a rotating file handler to manage log files
-fh = logging.handlers.RotatingFileHandler(
-    'bot.log',  # Log file name
-    maxBytes=5*1024*1024,  # Maximum size per log file (5 MB)
-    backupCount=5  # Number of backup log files to keep
-)
-fh.setLevel(logging.INFO)  # Set logging level for file handler
-fh.setFormatter(formatter)  # Apply the formatter to file handler
-logger.addHandler(fh)  # Add file handler to the logger
+    # File Handler with Rotation
+    fh = logging.handlers.RotatingFileHandler(
+        'bot.log',  # Log file name
+        maxBytes=5*1024*1024,  # Maximum size per log file (5 MB)
+        backupCount=5  # Number of backup log files to keep
+    )
+    fh.setLevel(logging.INFO)  # Set logging level for file handler
+    fh.setFormatter(formatter)  # Apply the formatter to file handler
+    logger.addHandler(fh)  # Add file handler to the logger
 
 # -----------------------------
 # Data Classes for Configuration
@@ -85,7 +60,6 @@ class BotConfig:
     num_of_grids: int
     leverage: int = 1
     testnet: bool = False
-    client: Optional[AsyncClient] = field(default=None, init=False)  # Binance client will be initialized later
 
 # -----------------------------
 # BinanceBot Class Definition
@@ -104,12 +78,12 @@ class BinanceBot:
             config (BotConfig): Configuration parameters for the bot.
         """
         self.config = config
-        self.api_key = os.getenv('BINANCE_API_KEY')  # Fetch API key from environment variable
-        self.api_secret = os.getenv('BINANCE_API_SECRET')  # Fetch API secret from environment variable
+        self.api_key = k.binance_testnet_api_key  # Directly assign the key
+        self.api_secret = k.binance_testnet_api_secret  # Directly assign the secret
 
         # Check if API keys are set
         if not self.api_key or not self.api_secret:
-            logger.error("Binance API keys not set in environment variables.")
+            logger.error("Binance API keys are missing.")
             sys.exit(1)  # Exit the program if API keys are missing
 
         self.client: Optional[AsyncClient] = None  # Binance AsyncClient will be initialized later
@@ -151,22 +125,68 @@ class BinanceBot:
         except Exception as e:
             logger.error(f"Unexpected error setting leverage: {e}")
 
-    async def get_balance(self) -> pd.DataFrame:
+    async def get_position_direction(self) -> str:
         """
-        Retrieve and log the account balance for the trading symbol.
+        Determine the current position direction: LONG, SHORT, or FLAT.
 
         Returns:
-            pd.DataFrame: DataFrame containing account balance information.
+            str: 'LONG', 'SHORT', or 'FLAT'.
         """
         try:
-            account_info = await self.client.futures_account()
-            assets = account_info.get('assets', [])
-            df = pd.DataFrame(assets)
-            logger.info(f"Account Balance for {self.config.symbol}:\n{df}")
-            return df
+            positions = await self.client.futures_position_information(symbol=self.config.symbol)
+            for position in positions:
+                if position['symbol'] == self.config.symbol:
+                    position_amt = float(position['positionAmt'])
+                    logger.debug(f"Position amount for {self.config.symbol}: {position_amt}")
+                    if position_amt > 0:
+                        return "LONG"
+                    elif position_amt < 0:
+                        return "SHORT"
+                    else:
+                        return "FLAT"
+            return "FLAT"
         except Exception as e:
-            logger.error(f"Error retrieving account balance: {e}")
-            return pd.DataFrame()  # Return an empty DataFrame in case of error
+            logger.error(f"Error determining position direction: {e}")
+            return "FLAT"
+
+    async def get_mark_price(self) -> Optional[float]:
+        """
+        Retrieve the current mark price for the trading symbol.
+
+        Returns:
+            Optional[float]: Current mark price if successful, else None.
+        """
+        try:
+            ticker = await self.client.futures_mark_price(symbol=self.config.symbol)
+            price = float(ticker['markPrice'])
+            logger.debug(f"Mark price for {self.config.symbol}: {price}")
+            return price
+        except Exception as e:
+            logger.error(f"Error fetching mark price: {e}")
+            return None
+
+    async def draw_grid(self):
+        """
+        Place grid of limit buy and sell orders around the current market price.
+        """
+        current_price = await self.get_mark_price()
+        if current_price is None:
+            logger.warning("Current price unavailable. Skipping grid drawing.")
+            return
+
+        grid_spacing = self.config.proportion
+        for i in range(1, self.config.num_of_grids + 1):
+            sell_price = round_step_size(
+                current_price * (1 + grid_spacing * i / 100),
+                step_size=10**-self.config.no_of_decimal_places
+            )
+            buy_price = round_step_size(
+                current_price * (1 - grid_spacing * i / 100),
+                step_size=10**-self.config.no_of_decimal_places
+            )
+            await self.place_limit_order(SIDE_SELL, self.config.volume, sell_price)
+            await self.place_limit_order(SIDE_BUY, self.config.volume, buy_price)
+            logger.info(f"Placed grid orders at Sell: {sell_price}, Buy: {buy_price}")
 
     async def place_limit_order(self, side: str, quantity: float, price: float) -> Optional[dict]:
         """
@@ -209,7 +229,6 @@ class BinanceBot:
         try:
             open_orders = await self.client.futures_get_open_orders(symbol=self.config.symbol)
             if side:
-                # Filter orders by the specified side
                 open_orders = [order for order in open_orders if order['side'] == side.upper()]
             for order in open_orders:
                 await self.client.futures_cancel_order(symbol=self.config.symbol, orderId=order['orderId'])
@@ -221,70 +240,6 @@ class BinanceBot:
         except Exception as e:
             logger.error(f"Error canceling orders: {e}")
 
-    async def get_position_direction(self) -> str:
-        """
-        Determine the current position direction: LONG, SHORT, or FLAT.
-
-        Returns:
-            str: 'LONG', 'SHORT', or 'FLAT'.
-        """
-        try:
-            positions = await self.client.futures_position_information(symbol=self.config.symbol)
-            position_amt = float(positions[0]['positionAmt'])
-            logger.debug(f"Position amount: {position_amt}")
-            if position_amt > 0:
-                return "LONG"
-            elif position_amt < 0:
-                return "SHORT"
-            else:
-                return "FLAT"
-        except Exception as e:
-            logger.error(f"Error determining position direction: {e}")
-            return "FLAT"  # Default to FLAT in case of error
-
-    async def get_mark_price(self) -> Optional[float]:
-        """
-        Retrieve the current mark price for the trading symbol.
-
-        Returns:
-            Optional[float]: Current mark price if successful, else None.
-        """
-        try:
-            ticker = await self.client.futures_mark_price(symbol=self.config.symbol)
-            price = float(ticker['markPrice'])
-            logger.debug(f"Mark price for {self.config.symbol}: {price}")
-            return price
-        except Exception as e:
-            logger.error(f"Error fetching mark price: {e}")
-            return None  # Return None if unable to fetch price
-
-    async def draw_grid(self):
-        """
-        Place grid of limit buy and sell orders around the current market price.
-        """
-        current_price = await self.get_mark_price()
-        if current_price is None:
-            logger.warning("Current price unavailable. Skipping grid drawing.")
-            return
-
-        # Calculate grid levels based on proportion and number of grids
-        grid_spacing = self.config.proportion
-        for i in range(1, self.config.num_of_grids + 1):
-            # Calculate sell price for the grid
-            sell_price = round_step_size(
-                current_price * (1 + grid_spacing * i / 100),
-                step_size=10**-self.config.no_of_decimal_places
-            )
-            # Calculate buy price for the grid
-            buy_price = round_step_size(
-                current_price * (1 - grid_spacing * i / 100),
-                step_size=10**-self.config.no_of_decimal_places
-            )
-            # Place sell and buy limit orders
-            await self.place_limit_order(SIDE_SELL, self.config.volume, sell_price)
-            await self.place_limit_order(SIDE_BUY, self.config.volume, buy_price)
-            logger.info(f"Placed grid orders at Sell: {sell_price}, Buy: {buy_price}")
-
     async def calculate_take_profit_level(self) -> Tuple[Optional[float], Optional[float]]:
         """
         Calculate the take-profit price level based on current open positions.
@@ -294,8 +249,7 @@ class BinanceBot:
         """
         try:
             positions = await self.client.futures_position_information(symbol=self.config.symbol)
-            # Find the position with a non-zero amount
-            position = next((p for p in positions if float(p['positionAmt']) != 0), None)
+            position = next((p for p in positions if p['symbol'] == self.config.symbol and float(p['positionAmt']) != 0), None)
             if not position:
                 logger.info("No open positions to calculate take profit.")
                 return None, None
@@ -312,16 +266,24 @@ class BinanceBot:
             # Calculate margin and desired profit
             margin = (entry_price * abs(position_amt)) / leverage
             profit = margin * (self.config.take_profit_percent / 100)
-            tp_price = round_step_size(
-                entry_price + (profit / position_amt),
-                step_size=10**-self.config.no_of_decimal_places
-            )
 
-            logger.info(f"Calculated TP level: Price={tp_price}, Amount={abs(position_amt)}")
-            return tp_price, abs(position_amt)
+            # Calculate TP price based on position direction
+            if position_amt > 0:  # LONG
+                tp_price = entry_price + (profit / position_amt)
+            elif position_amt < 0:  # SHORT
+                tp_price = entry_price - (profit / abs(position_amt))
+            else:
+                tp_price = None
+
+            if tp_price:
+                tp_price = round_step_size(tp_price, step_size=10**-self.config.no_of_decimal_places)
+                logger.info(f"Calculated TP level: Price={tp_price}, Amount={abs(position_amt)}")
+                return tp_price, abs(position_amt)
+            else:
+                return None, None
         except Exception as e:
             logger.error(f"Exception in calculate_take_profit_level: {e}")
-            return None, None  # Return None values in case of error
+            return None, None
 
     async def place_take_profit_order(self, price: float, amount: float, direction: str):
         """
@@ -333,8 +295,9 @@ class BinanceBot:
             direction (str): 'LONG' or 'SHORT'.
         """
         side = SIDE_SELL if direction == "LONG" else SIDE_BUY  # Determine side based on position
-        await self.place_limit_order(side, amount, price)
-        logger.info(f"Placed take-profit order: {side} {price} for {self.config.symbol}")
+        order = await self.place_limit_order(side, amount, price)
+        if order:
+            logger.info(f"Placed take-profit order: {side} {price} for {self.config.symbol}")
 
     async def monitor_position(self):
         """
@@ -344,7 +307,6 @@ class BinanceBot:
             try:
                 direction = await self.get_position_direction()
                 if direction != "FLAT":
-                    # If there is an open position, manage take-profit orders
                     logger.info(f"Position detected: {direction} for {self.config.symbol}")
 
                     # Cancel opposing side orders to avoid conflicting orders
@@ -360,7 +322,6 @@ class BinanceBot:
                     while direction != "FLAT":
                         new_direction = await self.get_position_direction()
                         if new_direction != direction:
-                            # If position direction changes, update orders accordingly
                             logger.info(f"Position direction changed from {direction} to {new_direction}")
                             await self.cancel_orders()
                             break
@@ -368,7 +329,6 @@ class BinanceBot:
                         # Recalculate take-profit level
                         new_tp_price, new_tp_amount = await self.calculate_take_profit_level()
                         if new_tp_price and new_tp_price != tp_price:
-                            # If TP level has changed, update the orders
                             logger.info("TP level changed. Updating orders...")
                             await self.cancel_orders()
                             await self.place_take_profit_order(new_tp_price, new_tp_amount, direction)
@@ -376,7 +336,6 @@ class BinanceBot:
 
                         await asyncio.sleep(5)  # Wait before the next check
                 else:
-                    # If no open positions, draw grid orders
                     logger.info(f"No open positions for {self.config.symbol}. Drawing grid...")
                     await self.draw_grid()
 
@@ -400,23 +359,35 @@ async def main():
     """
     Main function to initialize and run multiple BinanceBots concurrently based on the configuration.
     """
-    bots = []
-    for bot_cfg in config['bots']:
-        # Create a BotConfig instance for each bot in the configuration
-        bot_config = BotConfig(
-            symbol=bot_cfg['symbol'],
-            no_of_decimal_places=bot_cfg['no_of_decimal_places'],
-            volume=bot_cfg['volume'],
-            proportion=bot_cfg['proportion'],
-            take_profit_percent=bot_cfg['take_profit_percent'],
-            num_of_grids=bot_cfg['num_of_grids'],
-            leverage=bot_cfg.get('leverage', 1),
-            testnet=config.get('testnet', False)
+    # Define the configurations for each bot directly within the script
+    bot_configs = [
+        BotConfig(
+            symbol="BTCUSDT",
+            no_of_decimal_places=1,
+            volume=0.01,
+            proportion=0.04,
+            take_profit_percent=5,
+            num_of_grids=10,
+            leverage=10,
+            testnet=True
+        ),
+        BotConfig(
+            symbol="ETHUSDT",
+            no_of_decimal_places=2,
+            volume=0.01,
+            proportion=0.04,
+            take_profit_percent=5,
+            num_of_grids=10,
+            leverage=10,
+            testnet=True
         )
-        # Initialize a BinanceBot instance with the configuration
+        # Add more BotConfig instances here for additional bots
+    ]
+
+    bots = []
+    for bot_config in bot_configs:
         bot = BinanceBot(bot_config)
-        # Add the bot's run coroutine to the list of bots to execute
-        bots.append(bot.run())
+        bots.append(bot.run())  # Ensure 'run' method exists
 
     # Run all bots concurrently
     await asyncio.gather(*bots)
