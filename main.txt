@@ -1,0 +1,258 @@
+
+--- bot.py -------------------------------------
+
+from binance.client import Client
+import pandas as pd
+import key_file as k
+import requests
+import time
+
+client = Client(k.binance_testnet_api_key, k.binance_testnet_api_secret, tld="com", testnet=True)
+
+symbol = "BTCUSDT"
+price = float(client.futures_symbol_ticker(symbol="BTCUSDT")['price'])
+no_of_decimal_places = 1
+volume = 0.1
+proportion = 0.04
+tp = 5  # percent %
+num_of_grids = 10
+
+def getBalance():
+    x = client.futures_account()
+    df = pd.DataFrame(x['assets'])
+    print(df)
+
+def sell_limit(symbol, volume, price):
+    output = client.futures_create_order(
+        symbol=symbol,
+        side=Client.SIDE_SELL,
+        type=Client.FUTURE_ORDER_TYPE_LIMIT,
+        timeInForce=Client.TIME_IN_FORCE_GTC,
+        quantity=volume,
+        price=price,
+    )
+    print(f"Sell limit order placed: {output}")
+
+def buy_limit(symbol, volume, price):
+    output = client.futures_create_order(
+        symbol=symbol,
+        side=Client.SIDE_BUY,
+        type=Client.FUTURE_ORDER_TYPE_LIMIT,
+        timeInForce=Client.TIME_IN_FORCE_GTC,
+        quantity=volume,
+        price=price,
+    )
+    print(f"Buy limit order placed: {output}")
+
+def close_orders(symbol):
+    x = client.futures_get_open_orders(symbol=symbol)
+    df = pd.DataFrame(x)
+    for index in df.index:
+        client.futures_cancel_order(symbol=symbol, orderId=df['orderId'][index])
+    print(f"All open orders closed for {symbol}")
+
+def close_buy_orders(symbol):
+    x = client.futures_get_open_orders(symbol=symbol)
+    df = pd.DataFrame(x)
+    df = df[df['side'] == 'BUY']
+    for index in df.index:
+        client.futures_cancel_order(symbol=symbol, orderId=df['orderId'][index])
+    print(f"All buy orders closed for {symbol}")
+
+def close_sell_orders(symbol):
+    x = client.futures_get_open_orders(symbol=symbol)
+    df = pd.DataFrame(x)
+    df = df[df['side'] == 'SELL']
+    for index in df.index:
+        client.futures_cancel_order(symbol=symbol, orderId=df['orderId'][index])
+    print(f"All sell orders closed for {symbol}")
+
+def get_direction(symbol):
+    x = client.futures_position_information(symbol=symbol)
+    df = pd.DataFrame(x)
+    if 'positionAmt' in df.columns:
+        df['positionAmt'] = pd.to_numeric(df['positionAmt'], errors='coerce')
+        position_amt_sum = df['positionAmt'].sum()
+        print(f"Position amount sum: {position_amt_sum}")
+        if position_amt_sum > 0:
+            return "Long"
+        elif position_amt_sum < 0:
+            return "Short"
+        else:
+            return "FLAT"
+    else:
+        print("Warning: 'positionAmt' column is missing in the data.")
+        return None
+
+def get_mark_price(symbol):
+    x = client.get_symbol_ticker(symbol=symbol)
+    price = float(x['price'])
+    return price
+
+def draw_grid(x):
+    # for sell
+    pct_change = 1
+    adj_sell = 1.2
+    current_price = get_mark_price(symbol)
+    for i in range(x):
+        sell_price = float(round(((pct_change / 100) * current_price * adj_sell * proportion) + current_price, no_of_decimal_places))
+        sell_limit(symbol, volume, sell_price)
+        pct_change += 1
+        adj_sell += 0.2
+
+    # for buy
+    pct_change = -1
+    adj_buy = 1.2
+    current_price = get_mark_price(symbol)
+    for i in range(x):
+        buy_price = float(round(((pct_change / 100) * current_price * adj_buy * proportion) + current_price, no_of_decimal_places))
+        buy_limit(symbol, volume, buy_price)
+        pct_change -= 1
+        adj_buy -= 0.2
+
+def cal_tp_level(symbol, tp):
+    try:
+        x = client.futures_position_information(symbol=symbol)
+        df = pd.DataFrame(x)
+        df = df.loc[df["positionAmt"] != "0.000"]
+        if df.empty:
+            print("No positions found in cal_tp_level")
+            return None, None
+        entry_price = float(df["entryPrice"].iloc[0])
+        position_amt = float(df["positionAmt"].iloc[0])
+        leverage = float(df["leverage"].iloc[0])
+        t_margin = (entry_price * abs(position_amt)) / leverage
+        profit = t_margin * tp * 0.01
+        price = round((profit / position_amt) + entry_price, no_of_decimal_places)
+        t_position_amt = abs(position_amt)
+        for index in df.index[1:]:
+            t_position_amt += abs(float(df["positionAmt"][index]))
+        print(f"Calculated TP level: price={price}, t_position_amt={t_position_amt}")
+        return price, t_position_amt
+    except Exception as e:
+        print(f"Exception in cal_tp_level: {e}")
+        return None, None
+
+def place_tp_order(symbol, price, t_position_amt, direction):
+    try:
+        print(f"Placing TP order: symbol={symbol}, price={price}, t_position_amt={t_position_amt}, direction={direction}")
+        if direction == "Long":
+            sell_limit(symbol, t_position_amt, price)
+        elif direction == "Short":
+            buy_limit(symbol, t_position_amt, price)
+        else:
+            print(f"Unknown direction: {direction}")
+    except Exception as e:
+        print(f"Exception in place_tp_order: {e}")
+
+while True:
+    x = client.futures_get_open_orders(symbol=symbol)
+    df1 = pd.DataFrame(x)
+    if len(df1) == 0:
+        print("No open orders found. Drawing grid...")
+        draw_grid(num_of_grids)
+
+    y = client.futures_position_information(symbol=symbol)
+    df2 = pd.DataFrame(y)
+    df2 = df2.loc[df2['positionAmt'] != '0.000']
+
+    direction = None
+    if len(df2) > 0:
+        direction = get_direction(symbol)
+        try:
+            if direction == "Long":
+                print("Position is Long. Closing sell orders...")
+                close_sell_orders(symbol)
+            elif direction == "Short":
+                print("Position is Short. Closing buy orders...")
+                close_buy_orders(symbol)
+        except Exception as e:
+            print(f"Exception in closing opposing orders: {e}")
+    else:
+        print("No positions open.")
+
+    if direction in ["Long", "Short"]:
+        price0, amount0 = cal_tp_level(symbol, tp)
+        if price0 is not None and amount0 is not None:
+            place_tp_order(symbol, price0, amount0, direction)
+
+            is_ok = True
+            while is_ok:
+                try:
+                    price1, amount1 = cal_tp_level(symbol, tp)
+                    if price1 is not None and amount1 is not None:
+                        print(f"Monitoring TP orders: price1={price1}, amount1={amount1}")
+
+                        if price1 != price0 or amount1 != amount0:
+                            print("TP level changed. Updating orders...")
+                            if direction == "Long":
+                                close_sell_orders(symbol)
+                            elif direction == "Short":
+                                close_buy_orders(symbol)
+                            place_tp_order(symbol, price1, amount1, direction)
+                            price0 = price1
+                            amount0 = amount1
+                    else:
+                        print("Failed to calculate new TP level.")
+                except Exception as e:
+                    print(f"Exception in monitoring loop: {e}")
+
+                y = client.futures_position_information(symbol=symbol)
+                df2 = pd.DataFrame(y)
+                df2 = df2.loc[df2['positionAmt'] != '0.000']
+
+                if len(df2) == 0:
+                    try:
+                        print("Position closed. Closing all orders...")
+                        close_orders(symbol)
+                        is_ok = False
+                    except Exception as e:
+                        print(f"Exception in closing orders: {e}")
+                time.sleep(1)  # Avoid tight loop
+    else:
+        print("Waiting for a position to open...")
+    time.sleep(5)  # Pause before the next iteration
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+main.py
+
+from threading import Thread
+import key_file as k
+from bot import initialize_bot, run_bot  # Ensure bot_functions is the correct module
+
+
+# Initialize bots with specified parameters
+bot1 = initialize_bot("BTCUSDT", 1, 0.01, 0.04, 5, 10, testnet=True)
+bot2 = initialize_bot("ETHUSDT", 2, 0.01, 0.04, 5, 10, testnet=True)
+
+def run_bot1():
+    """Thread function to run bot1."""
+    try:
+        print("Starting bot1 for BTCUSDT...")
+        run_bot(bot1)
+    except Exception as e:
+        print(f"Error running bot1: {e}")
+
+def run_bot2():
+    """Thread function to run bot2."""
+    try:
+        print("Starting bot2 for ETHUSDT...")
+        run_bot(bot2)
+    except Exception as e:
+        print(f"Error running bot2: {e}")
+
+# Start each bot in its own thread for parallel execution
+if __name__ == "__main__":
+    print("Initializing and starting bot threads...")
+    t1 = Thread(target=run_bot1)
+    t2 = Thread(target=run_bot2)
+
+    t1.start()
+    t2.start()
+
+    # Join threads to ensure the main program waits for both bots to complete
+    t1.join()
+    t2.join()
+
+    print("Both bot threads have completed.")

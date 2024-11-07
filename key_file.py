@@ -1,0 +1,2 @@
+binance_testnet_api_key = "7e411adbb5d2d1c6e32e1cb5cc30c1588e3e983a3e0cc917f77897a7cd12fa44"
+binance_testnet_api_secret = "402b34f7505924f58c47c9d1b4c443f8704c345deb62be307a0289760ff5f896"
