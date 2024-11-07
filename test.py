@@ -8,7 +8,7 @@ import logging
 import pandas as pd
 
 # Import your bot's functions
-from bot import (
+from gridstrategy import (
     initialize_bot,
     get_balance,
     place_limit_order,
