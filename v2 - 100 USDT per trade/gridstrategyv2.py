@@ -20,7 +20,7 @@ import key_file as k  # Ensure this file is secure and not tracked by version co
 
 # Create a logger for the BinanceBot
 logger = logging.getLogger("BinanceBot")
-logger.setLevel(logging.INFO)  # Set the default logging level to INFO
+logger.setLevel(logging.DEBUG)  # Set the default logging level to DEBUG for more detailed output
 
 # Define the log message format
 formatter = logging.Formatter('%(asctime)s %(levelname)s:%(message)s')
@@ -29,7 +29,7 @@ formatter = logging.Formatter('%(asctime)s %(levelname)s:%(message)s')
 if not logger.hasHandlers():
     # Console Handler
     ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.INFO)  # Set logging level for console
+    ch.setLevel(logging.DEBUG)  # Set logging level for console to DEBUG
     ch.setFormatter(formatter)  # Apply the formatter to console handler
     logger.addHandler(ch)  # Add console handler to the logger
 
@@ -39,7 +39,7 @@ if not logger.hasHandlers():
         maxBytes=5*1024*1024,  # Maximum size per log file (5 MB)
         backupCount=5  # Number of backup log files to keep
     )
-    fh.setLevel(logging.INFO)  # Set logging level for file handler
+    fh.setLevel(logging.DEBUG)  # Set logging level for file handler to DEBUG
     fh.setFormatter(formatter)  # Apply the formatter to file handler
     logger.addHandler(fh)  # Add file handler to the logger
 
@@ -84,7 +84,10 @@ class BinanceBot:
         # Check if API keys are set
         if not self.api_key or not self.api_secret:
             logger.error("Binance API keys are missing.")
+            print("ERROR: Binance API keys are missing.")
             sys.exit(1)  # Exit the program if API keys are missing
+        else:
+            print(f"Initialized BinanceBot for {self.config.symbol} with leverage {self.config.leverage}x.")
 
         self.client: Optional[AsyncClient] = None  # Binance AsyncClient will be initialized later
 
@@ -101,11 +104,21 @@ class BinanceBot:
                 testnet=self.config.testnet  # Use testnet if specified
             )
             logger.info(f"Initialized Binance client for {self.config.symbol}")
+            print(f"INFO: Binance client initialized for {self.config.symbol}")
 
             # Set leverage for the trading symbol
             await self.set_leverage()
+        except BinanceAPIException as e:
+            logger.error(f"Binance API Exception during client initialization: {e}")
+            print(f"ERROR: Binance API Exception during client initialization: {e}")
+            sys.exit(1)
+        except BinanceRequestException as e:
+            logger.error(f"Binance Request Exception during client initialization: {e}")
+            print(f"ERROR: Binance Request Exception during client initialization: {e}")
+            sys.exit(1)
         except Exception as e:
-            logger.error(f"Failed to initialize client: {e}")
+            logger.error(f"Unexpected error during client initialization: {e}")
+            print(f"ERROR: Unexpected error during client initialization: {e}")
             sys.exit(1)  # Exit the program if client initialization fails
 
     async def set_leverage(self):
@@ -118,12 +131,16 @@ class BinanceBot:
                 leverage=self.config.leverage
             )
             logger.info(f"Leverage set to {self.config.leverage}x for {self.config.symbol}")
+            print(f"INFO: Leverage set to {self.config.leverage}x for {self.config.symbol}")
         except BinanceAPIException as e:
             logger.error(f"Binance API Error setting leverage: {e}")
+            print(f"ERROR: Binance API Error setting leverage: {e}")
         except BinanceRequestException as e:
             logger.error(f"Binance Request Error setting leverage: {e}")
+            print(f"ERROR: Binance Request Error setting leverage: {e}")
         except Exception as e:
             logger.error(f"Unexpected error setting leverage: {e}")
+            print(f"ERROR: Unexpected error setting leverage: {e}")
 
     async def get_position_direction(self) -> str:
         """
@@ -137,16 +154,30 @@ class BinanceBot:
             for position in positions:
                 if position['symbol'] == self.config.symbol:
                     position_amt = float(position['positionAmt'])
-                    logger.debug(f"Position amount for {self.config.symbol}: {position_amt}")
+                    logger.debug(f"Position for {self.config.symbol}: {position_amt}")
+                    print(f"DEBUG: Position for {self.config.symbol}: {position_amt}")
                     if position_amt > 0:
+                        print(f"INFO: Current position is LONG for {self.config.symbol}")
                         return "LONG"
                     elif position_amt < 0:
+                        print(f"INFO: Current position is SHORT for {self.config.symbol}")
                         return "SHORT"
                     else:
+                        print(f"INFO: Current position is FLAT for {self.config.symbol}")
                         return "FLAT"
+            print(f"INFO: No matching symbol found in position information for {self.config.symbol}.")
+            return "FLAT"
+        except BinanceAPIException as e:
+            logger.error(f"Binance API Error determining position direction: {e}")
+            print(f"ERROR: Binance API Error determining position direction: {e}")
+            return "FLAT"
+        except BinanceRequestException as e:
+            logger.error(f"Binance Request Error determining position direction: {e}")
+            print(f"ERROR: Binance Request Error determining position direction: {e}")
             return "FLAT"
         except Exception as e:
             logger.error(f"Error determining position direction: {e}")
+            print(f"ERROR: Error determining position direction: {e}")
             return "FLAT"
 
     async def get_mark_price(self) -> Optional[float]:
@@ -160,9 +191,19 @@ class BinanceBot:
             ticker = await self.client.futures_mark_price(symbol=self.config.symbol)
             price = float(ticker['markPrice'])
             logger.debug(f"Mark price for {self.config.symbol}: {price}")
+            print(f"DEBUG: Mark price for {self.config.symbol}: {price}")
             return price
+        except BinanceAPIException as e:
+            logger.error(f"Binance API Error fetching mark price: {e}")
+            print(f"ERROR: Binance API Error fetching mark price: {e}")
+            return None
+        except BinanceRequestException as e:
+            logger.error(f"Binance Request Error fetching mark price: {e}")
+            print(f"ERROR: Binance Request Error fetching mark price: {e}")
+            return None
         except Exception as e:
             logger.error(f"Error fetching mark price: {e}")
+            print(f"ERROR: Error fetching mark price: {e}")
             return None
 
     async def draw_grid(self):
@@ -172,21 +213,30 @@ class BinanceBot:
         current_price = await self.get_mark_price()
         if current_price is None:
             logger.warning("Current price unavailable. Skipping grid drawing.")
+            print("WARNING: Current price unavailable. Skipping grid drawing.")
             return
 
-        grid_spacing = self.config.proportion
+        grid_spacing = self.config.proportion  # Ensure this is used correctly
+        print(f"INFO: Drawing grid with {self.config.num_of_grids} levels at {self.config.proportion}% intervals.")
+        logger.info(f"Drawing grid with {self.config.num_of_grids} levels at {self.config.proportion}% intervals.")
+
         for i in range(1, self.config.num_of_grids + 1):
+            # Adjust grid_spacing usage based on whether proportion is a percentage or decimal
+            # Assuming proportion is a percentage (e.g., 4 for 4%)
             sell_price = round_step_size(
-                current_price * (1 + grid_spacing * i / 100),
+                current_price * (1 + (grid_spacing * i) / 100),
                 step_size=10**-self.config.no_of_decimal_places
             )
             buy_price = round_step_size(
-                current_price * (1 - grid_spacing * i / 100),
+                current_price * (1 - (grid_spacing * i) / 100),
                 step_size=10**-self.config.no_of_decimal_places
             )
+            print(f"INFO: Placing SELL limit order at {sell_price} and BUY limit order at {buy_price}.")
+            logger.info(f"Placing SELL limit order at {sell_price} and BUY limit order at {buy_price}.")
             await self.place_limit_order(SIDE_SELL, self.config.volume, sell_price)
             await self.place_limit_order(SIDE_BUY, self.config.volume, buy_price)
             logger.info(f"Placed grid orders at Sell: {sell_price}, Buy: {buy_price}")
+            print(f"INFO: Placed grid orders at Sell: {sell_price}, Buy: {buy_price}")
 
     async def place_limit_order(self, side: str, quantity: float, price: float) -> Optional[dict]:
         """
@@ -210,13 +260,17 @@ class BinanceBot:
                 price=str(price),  # Price must be a string
             )
             logger.info(f"{side} limit order placed: {order}")
+            print(f"INFO: {side} limit order placed: {order}")
             return order
         except BinanceAPIException as e:
             logger.error(f"Binance API Error placing {side} order: {e}")
+            print(f"ERROR: Binance API Error placing {side} order: {e}")
         except BinanceRequestException as e:
             logger.error(f"Binance Request Error placing {side} order: {e}")
+            print(f"ERROR: Binance Request Error placing {side} order: {e}")
         except Exception as e:
             logger.error(f"Unexpected error placing {side} order: {e}")
+            print(f"ERROR: Unexpected error placing {side} order: {e}")
         return None  # Return None if order placement fails
 
     async def cancel_orders(self, side: Optional[str] = None):
@@ -230,38 +284,54 @@ class BinanceBot:
             open_orders = await self.client.futures_get_open_orders(symbol=self.config.symbol)
             if side:
                 open_orders = [order for order in open_orders if order['side'] == side.upper()]
+                print(f"INFO: Found {len(open_orders)} open {side.upper()} orders to cancel for {self.config.symbol}.")
+                logger.info(f"Found {len(open_orders)} open {side.upper()} orders to cancel for {self.config.symbol}.")
+            else:
+                print(f"INFO: Found {len(open_orders)} open orders to cancel for {self.config.symbol}.")
+                logger.info(f"Found {len(open_orders)} open orders to cancel for {self.config.symbol}.")
+
             for order in open_orders:
                 await self.client.futures_cancel_order(symbol=self.config.symbol, orderId=order['orderId'])
                 logger.info(f"Canceled order {order['orderId']} for {self.config.symbol}")
+                print(f"INFO: Canceled order {order['orderId']} for {self.config.symbol}")
+
             if side:
                 logger.info(f"All {side} orders canceled for {self.config.symbol}")
+                print(f"INFO: All {side} orders canceled for {self.config.symbol}")
             else:
                 logger.info(f"All orders canceled for {self.config.symbol}")
+                print(f"INFO: All orders canceled for {self.config.symbol}")
+        except BinanceAPIException as e:
+            logger.error(f"Binance API Error canceling orders: {e}")
+            print(f"ERROR: Binance API Error canceling orders: {e}")
+        except BinanceRequestException as e:
+            logger.error(f"Binance Request Error canceling orders: {e}")
+            print(f"ERROR: Binance Request Error canceling orders: {e}")
         except Exception as e:
             logger.error(f"Error canceling orders: {e}")
+            print(f"ERROR: Error canceling orders: {e}")
 
     async def calculate_take_profit_level(self) -> Tuple[Optional[float], Optional[float]]:
         """
         Calculate the take-profit price level based on current open positions.
 
         Returns:
-            Tuple[Optional[float], Optional[float]]: (Take-profit price, Position amount)
+            Tuple[Optional[float], Optional[float]]: (Take-profit price, Position quantity)
         """
         try:
             positions = await self.client.futures_position_information(symbol=self.config.symbol)
             position = next((p for p in positions if p['symbol'] == self.config.symbol and float(p['positionAmt']) != 0), None)
             if not position:
                 logger.info("No open positions to calculate take profit.")
+                print("INFO: No open positions to calculate take profit.")
                 return None, None
 
             entry_price = float(position['entryPrice'])  # Entry price of the position
             position_amt = float(position['positionAmt'])  # Amount of the position
-            leverage = float(position.get('leverage', 1))  # Leverage used
+            leverage = self.config.leverage  # Use leverage from configuration
 
-            # Validate leverage
-            if leverage <= 0:
-                logger.warning("Invalid leverage found. Defaulting to 1.")
-                leverage = 1
+            logger.debug(f"Entry Price: {entry_price}, Position Amount: {position_amt}, Leverage: {leverage}")
+            print(f"DEBUG: Entry Price: {entry_price}, Position Amount: {position_amt}, Leverage: {leverage}")
 
             # Calculate margin and desired profit
             margin = (entry_price * abs(position_amt)) / leverage
@@ -270,79 +340,116 @@ class BinanceBot:
             # Calculate TP price based on position direction
             if position_amt > 0:  # LONG
                 tp_price = entry_price + (profit / position_amt)
+                direction = "LONG"
+                print(f"INFO: Calculated TP price for LONG position: {tp_price}")
+                logger.info(f"Calculated TP price for LONG position: {tp_price}")
             elif position_amt < 0:  # SHORT
                 tp_price = entry_price - (profit / abs(position_amt))
+                direction = "SHORT"
+                print(f"INFO: Calculated TP price for SHORT position: {tp_price}")
+                logger.info(f"Calculated TP price for SHORT position: {tp_price}")
             else:
                 tp_price = None
+                direction = "FLAT"
 
             if tp_price:
                 tp_price = round_step_size(tp_price, step_size=10**-self.config.no_of_decimal_places)
-                logger.info(f"Calculated TP level: Price={tp_price}, Amount={abs(position_amt)}")
+                logger.info(f"Calculated TP level: Price={tp_price}, Quantity={abs(position_amt)}")
+                print(f"INFO: Calculated TP level: Price={tp_price}, Quantity={abs(position_amt)}")
                 return tp_price, abs(position_amt)
             else:
                 return None, None
+        except BinanceAPIException as e:
+            logger.error(f"Binance API Error in calculate_take_profit_level: {e}")
+            print(f"ERROR: Binance API Error in calculate_take_profit_level: {e}")
+            return None, None
+        except BinanceRequestException as e:
+            logger.error(f"Binance Request Error in calculate_take_profit_level: {e}")
+            print(f"ERROR: Binance Request Error in calculate_take_profit_level: {e}")
+            return None, None
         except Exception as e:
             logger.error(f"Exception in calculate_take_profit_level: {e}")
+            print(f"ERROR: Exception in calculate_take_profit_level: {e}")
             return None, None
 
-    async def place_take_profit_order(self, price: float, amount: float, direction: str):
+    async def place_take_profit_order(self, price: float, quantity: float, direction: str):
         """
         Place a take-profit order based on the current position direction.
 
         Args:
             price (float): Take-profit price.
-            amount (float): Amount to sell or buy.
+            quantity (float): Amount to sell or buy.
             direction (str): 'LONG' or 'SHORT'.
         """
         side = SIDE_SELL if direction == "LONG" else SIDE_BUY  # Determine side based on position
-        order = await self.place_limit_order(side, amount, price)
+        print(f"INFO: Placing take-profit order. Side: {side}, Quantity: {quantity}, Price: {price}")
+        logger.info(f"Placing take-profit order. Side: {side}, Quantity: {quantity}, Price: {price}")
+        order = await self.place_limit_order(side, quantity, price)
         if order:
-            logger.info(f"Placed take-profit order: {side} {price} for {self.config.symbol}")
-
+            logger.info(f"Placed take-profit order: {side} {quantity} at {price} for {self.config.symbol}")
+            print(f"INFO: Placed take-profit order: {side} {quantity} at {price} for {self.config.symbol}")
 
     async def monitor_position(self):
         """
         Monitor the position and manage orders accordingly.
         """
+        print("INFO: Starting position monitoring.")
+        logger.info("Starting position monitoring.")
+
         while True:
             try:
                 direction = await self.get_position_direction()
                 if direction != "FLAT":
                     logger.info(f"Position detected: {direction} for {self.config.symbol}")
+                    print(f"INFO: Position detected: {direction} for {self.config.symbol}")
 
                     # Cancel opposing side orders to avoid conflicting orders
                     opposing_side = SIDE_SELL if direction == "LONG" else SIDE_BUY
+                    print(f"INFO: Cancelling opposing side orders: {opposing_side}")
+                    logger.info(f"Cancelling opposing side orders: {opposing_side}")
                     await self.cancel_orders(side=opposing_side)
 
                     # Calculate and place take-profit order
-                    tp_price, tp_amount = await self.calculate_take_profit_level()
-                    if tp_price and tp_amount:
-                        await self.place_take_profit_order(tp_price, tp_amount, direction)
+                    tp_price, tp_quantity = await self.calculate_take_profit_level()
+                    if tp_price and tp_quantity:
+                        await self.place_take_profit_order(tp_price, tp_quantity, direction)
 
                     # Continuously monitor the position to adjust TP orders if needed
                     while direction != "FLAT":
                         new_direction = await self.get_position_direction()
                         if new_direction != direction:
                             logger.info(f"Position direction changed from {direction} to {new_direction}")
+                            print(f"INFO: Position direction changed from {direction} to {new_direction}")
                             await self.cancel_orders()
                             break
 
                         # Recalculate take-profit level
-                        new_tp_price, new_tp_amount = await self.calculate_take_profit_level()
+                        new_tp_price, new_tp_quantity = await self.calculate_take_profit_level()
                         if new_tp_price and new_tp_price != tp_price:
                             logger.info("TP level changed. Updating orders...")
+                            print("INFO: TP level changed. Updating orders...")
                             await self.cancel_orders()
-                            await self.place_take_profit_order(new_tp_price, new_tp_amount, direction)
-                            tp_price, tp_amount = new_tp_price, new_tp_amount
+                            await self.place_take_profit_order(new_tp_price, new_tp_quantity, direction)
+                            tp_price, tp_quantity = new_tp_price, new_tp_quantity
 
                         await asyncio.sleep(5)  # Wait before the next check
                 else:
                     logger.info(f"No open positions for {self.config.symbol}. Drawing grid...")
+                    print(f"INFO: No open positions for {self.config.symbol}. Drawing grid...")
                     await self.draw_grid()
 
                 await asyncio.sleep(10)  # Wait before the next monitoring cycle
+            except BinanceAPIException as e:
+                logger.error(f"Binance API Error in monitor_position: {e}")
+                print(f"ERROR: Binance API Error in monitor_position: {e}")
+                await asyncio.sleep(10)  # Wait before retrying in case of error
+            except BinanceRequestException as e:
+                logger.error(f"Binance Request Error in monitor_position: {e}")
+                print(f"ERROR: Binance Request Error in monitor_position: {e}")
+                await asyncio.sleep(10)  # Wait before retrying in case of error
             except Exception as e:
                 logger.error(f"Exception in monitor_position: {e}")
+                print(f"ERROR: Exception in monitor_position: {e}")
                 await asyncio.sleep(10)  # Wait before retrying in case of error
 
     async def run(self):
@@ -350,7 +457,16 @@ class BinanceBot:
         Run the BinanceBot by initializing the client and starting position monitoring.
         """
         await self.initialize_client()
-        await self.monitor_position()
+        try:
+            await self.monitor_position()
+        except Exception as e:
+            logger.error(f"Exception in run: {e}")
+            print(f"ERROR: Exception in run: {e}")
+        finally:
+            if self.client:
+                await self.client.close_connection()
+                logger.info(f"Closed Binance client for {self.config.symbol}")
+                print(f"INFO: Closed Binance client for {self.config.symbol}")
 
 # -----------------------------
 # Main Function to Run Bots
@@ -366,7 +482,7 @@ async def main():
             symbol="BTCUSDT",
             no_of_decimal_places=1,
             volume=0.01,
-            proportion=0.04,
+            proportion=4,  # Assuming proportion is a percentage (e.g., 4 for 4%)
             take_profit_percent=5,
             num_of_grids=10,
             leverage=10,
@@ -376,7 +492,7 @@ async def main():
             symbol="ETHUSDT",
             no_of_decimal_places=2,
             volume=0.01,
-            proportion=0.04,
+            proportion=4,  # Assuming proportion is a percentage
             take_profit_percent=5,
             num_of_grids=10,
             leverage=10,
@@ -388,7 +504,9 @@ async def main():
     bots = []
     for bot_config in bot_configs:
         bot = BinanceBot(bot_config)
-        bots.append(bot.run())  # Ensure 'run' method exists
+        bots.append(bot.run())  # Collect coroutine objects
+        print(f"INFO: Bot for {bot_config.symbol} added to the run queue.")
+        logger.info(f"Bot for {bot_config.symbol} added to the run queue.")
 
     # Run all bots concurrently
     await asyncio.gather(*bots)
@@ -400,10 +518,14 @@ async def main():
 if __name__ == "__main__":
     try:
         # Start the asyncio event loop and run the main function
+        print("INFO: Starting Binance trading bots...")
+        logger.info("Starting Binance trading bots...")
         asyncio.run(main())
     except KeyboardInterrupt:
         # Handle user-initiated interruption (e.g., Ctrl+C)
         logger.info("Bot terminated by user.")
+        print("INFO: Bot terminated by user.")
     except Exception as e:
         # Handle any unexpected exceptions
         logger.error(f"Unhandled exception: {e}")
+        print(f"ERROR: Unhandled exception: {e}")
