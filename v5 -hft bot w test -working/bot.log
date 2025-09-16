@@ -1340,3 +1340,290 @@
 2024-11-09 00:52:09,173 INFO:Cancelling opposing side orders: SELL
 2024-11-09 00:52:09,321 INFO:Found 0 open SELL orders to cancel for ETHUSDT.
 2024-11-09 00:52:09,321 INFO:All SELL orders canceled for ETHUSDT
+2025-09-12 22:11:15,055 INFO:Starting Binance trading bots...
+2025-09-12 22:11:15,997 INFO:Initialized Binance client for BTCUSDT
+2025-09-12 22:11:16,002 INFO:Initialized Binance client for ETHUSDT
+2025-09-12 22:11:16,551 INFO:Leverage set to 10x for ETHUSDT
+2025-09-12 22:11:16,553 INFO:Leverage set to 10x for BTCUSDT
+2025-09-12 22:11:17,125 INFO:Tick size for ETHUSDT is 0.01
+2025-09-12 22:11:17,127 INFO:Starting position monitoring.
+2025-09-12 22:11:17,139 INFO:Tick size for BTCUSDT is 0.1
+2025-09-12 22:11:17,140 INFO:Starting position monitoring.
+2025-09-12 22:11:17,296 DEBUG:Position for BTCUSDT: 0.0
+2025-09-12 22:11:17,296 INFO:Current position is FLAT for BTCUSDT
+2025-09-12 22:11:17,296 INFO:No open positions for BTCUSDT. Drawing grid...
+2025-09-12 22:11:17,446 DEBUG:Mark price for BTCUSDT: 115247.4
+2025-09-12 22:11:17,446 INFO:Drawing grid with 5 levels at tick size intervals (0.1).
+2025-09-12 22:11:17,446 INFO:Placing SELL limit order at 115247.5 and BUY limit order at 115247.2.
+2025-09-12 22:11:17,553 DEBUG:Position for ETHUSDT: 0.0
+2025-09-12 22:11:17,554 INFO:Current position is FLAT for ETHUSDT
+2025-09-12 22:11:17,554 INFO:No open positions for ETHUSDT. Drawing grid...
+2025-09-12 22:11:17,867 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:17,976 DEBUG:Mark price for ETHUSDT: 4553.87089147
+2025-09-12 22:11:17,977 INFO:Drawing grid with 5 levels at tick size intervals (0.01).
+2025-09-12 22:11:17,977 INFO:Placing SELL limit order at 4553.88 and BUY limit order at 4553.86.
+2025-09-12 22:11:18,060 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:18,061 INFO:Placing SELL limit order at 115247.5 and BUY limit order at 115247.2.
+2025-09-12 22:11:18,400 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:18,486 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:18,683 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:18,684 INFO:Placing SELL limit order at 115247.7 and BUY limit order at 115247.0.
+2025-09-12 22:11:18,825 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:18,826 INFO:Placing SELL limit order at 4553.89 and BUY limit order at 4553.85.
+2025-09-12 22:11:18,838 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:18,989 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:18,993 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:18,993 INFO:Placing SELL limit order at 115247.7 and BUY limit order at 115247.0.
+2025-09-12 22:11:19,144 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:19,145 INFO:Placing SELL limit order at 4553.9 and BUY limit order at 4553.84.
+2025-09-12 22:11:19,300 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:19,418 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:19,468 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:19,468 INFO:Placing SELL limit order at 4553.91 and BUY limit order at 4553.83.
+2025-09-12 22:11:19,570 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:19,570 INFO:Placing SELL limit order at 115247.9 and BUY limit order at 115246.9.
+2025-09-12 22:11:19,723 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:19,886 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:20,038 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:20,038 INFO:Placing SELL limit order at 4553.92 and BUY limit order at 4553.82.
+2025-09-12 22:11:20,148 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:20,192 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:20,345 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:21,301 DEBUG:Position for BTCUSDT: 0.0
+2025-09-12 22:11:21,301 INFO:Current position is FLAT for BTCUSDT
+2025-09-12 22:11:21,302 INFO:No open positions for BTCUSDT. Drawing grid...
+2025-09-12 22:11:21,455 DEBUG:Mark price for BTCUSDT: 115247.5
+2025-09-12 22:11:21,456 INFO:Drawing grid with 5 levels at tick size intervals (0.1).
+2025-09-12 22:11:21,459 INFO:Placing SELL limit order at 115247.6 and BUY limit order at 115247.4.
+2025-09-12 22:11:21,635 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:21,770 DEBUG:Position for ETHUSDT: 0.0
+2025-09-12 22:11:21,771 INFO:Current position is FLAT for ETHUSDT
+2025-09-12 22:11:21,771 INFO:No open positions for ETHUSDT. Drawing grid...
+2025-09-12 22:11:21,925 DEBUG:Mark price for ETHUSDT: 4554.29
+2025-09-12 22:11:21,925 INFO:Drawing grid with 5 levels at tick size intervals (0.01).
+2025-09-12 22:11:21,926 INFO:Placing SELL limit order at 4554.3 and BUY limit order at 4554.28.
+2025-09-12 22:11:22,098 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,101 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,101 INFO:Placing SELL limit order at 115247.7 and BUY limit order at 115247.3.
+2025-09-12 22:11:22,256 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,423 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,424 INFO:Placing SELL limit order at 115247.8 and BUY limit order at 115247.2.
+2025-09-12 22:11:22,525 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,526 INFO:Placing SELL limit order at 4554.31 and BUY limit order at 4554.26.
+2025-09-12 22:11:22,579 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,678 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,730 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,731 INFO:Placing SELL limit order at 115247.9 and BUY limit order at 115247.1.
+2025-09-12 22:11:22,833 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:22,833 INFO:Placing SELL limit order at 4554.32 and BUY limit order at 4554.26.
+2025-09-12 22:11:22,882 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:23,254 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:23,343 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:23,344 INFO:Placing SELL limit order at 115248.0 and BUY limit order at 115247.0.
+2025-09-12 22:11:23,409 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:23,410 INFO:Placing SELL limit order at 4554.33 and BUY limit order at 4554.25.
+2025-09-12 22:11:23,498 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:23,562 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:23,650 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:23,712 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:23,713 INFO:Placing SELL limit order at 4554.34 and BUY limit order at 4554.24.
+2025-09-12 22:11:24,144 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:24,295 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:24,808 DEBUG:Position for BTCUSDT: 0.0
+2025-09-12 22:11:24,808 INFO:Current position is FLAT for BTCUSDT
+2025-09-12 22:11:24,809 INFO:No open positions for BTCUSDT. Drawing grid...
+2025-09-12 22:11:24,964 DEBUG:Mark price for BTCUSDT: 115260.8
+2025-09-12 22:11:24,965 INFO:Drawing grid with 5 levels at tick size intervals (0.1).
+2025-09-12 22:11:24,965 INFO:Placing SELL limit order at 115260.9 and BUY limit order at 115260.7.
+2025-09-12 22:11:25,393 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:25,455 DEBUG:Position for ETHUSDT: 0.0
+2025-09-12 22:11:25,456 INFO:Current position is FLAT for ETHUSDT
+2025-09-12 22:11:25,456 INFO:No open positions for ETHUSDT. Drawing grid...
+2025-09-12 22:11:25,552 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:25,553 INFO:Placing SELL limit order at 115261.0 and BUY limit order at 115260.6.
+2025-09-12 22:11:25,610 DEBUG:Mark price for ETHUSDT: 4554.1
+2025-09-12 22:11:25,611 INFO:Drawing grid with 5 levels at tick size intervals (0.01).
+2025-09-12 22:11:25,611 INFO:Placing SELL limit order at 4554.11 and BUY limit order at 4554.09.
+2025-09-12 22:11:25,761 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:25,917 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:25,917 INFO:Placing SELL limit order at 4554.12 and BUY limit order at 4554.08.
+2025-09-12 22:11:25,982 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,340 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,357 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,358 INFO:Placing SELL limit order at 115261.1 and BUY limit order at 115260.5.
+2025-09-12 22:11:26,494 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,495 INFO:Placing SELL limit order at 4554.13 and BUY limit order at 4554.07.
+2025-09-12 22:11:26,513 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,668 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,669 INFO:Placing SELL limit order at 115261.2 and BUY limit order at 115260.4.
+2025-09-12 22:11:26,823 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,920 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,979 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:26,980 INFO:Placing SELL limit order at 115261.3 and BUY limit order at 115260.3.
+2025-09-12 22:11:27,071 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:27,071 INFO:Placing SELL limit order at 4554.14 and BUY limit order at 4554.06.
+2025-09-12 22:11:27,142 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:27,230 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:27,293 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:27,419 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:27,420 INFO:Placing SELL limit order at 4554.15 and BUY limit order at 4554.05.
+2025-09-12 22:11:27,574 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:27,747 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:28,723 DEBUG:Position for BTCUSDT: 0.0
+2025-09-12 22:11:28,725 INFO:Current position is FLAT for BTCUSDT
+2025-09-12 22:11:28,726 INFO:No open positions for BTCUSDT. Drawing grid...
+2025-09-12 22:11:29,159 DEBUG:Mark price for BTCUSDT: 115244.26199605
+2025-09-12 22:11:29,160 INFO:Drawing grid with 5 levels at tick size intervals (0.1).
+2025-09-12 22:11:29,160 INFO:Placing SELL limit order at 115244.3 and BUY limit order at 115244.1.
+2025-09-12 22:11:29,169 DEBUG:Position for ETHUSDT: 0.0
+2025-09-12 22:11:29,169 INFO:Current position is FLAT for ETHUSDT
+2025-09-12 22:11:29,169 INFO:No open positions for ETHUSDT. Drawing grid...
+2025-09-12 22:11:29,321 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:29,323 DEBUG:Mark price for ETHUSDT: 4553.79920719
+2025-09-12 22:11:29,325 INFO:Drawing grid with 5 levels at tick size intervals (0.01).
+2025-09-12 22:11:29,326 INFO:Placing SELL limit order at 4553.8 and BUY limit order at 4553.78.
+2025-09-12 22:11:29,481 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:29,482 INFO:Placing SELL limit order at 115244.4 and BUY limit order at 115244.0.
+2025-09-12 22:11:29,751 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:29,908 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:29,909 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:29,909 INFO:Placing SELL limit order at 4553.81 and BUY limit order at 4553.77.
+2025-09-12 22:11:30,076 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:30,078 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:30,079 INFO:Placing SELL limit order at 115244.5 and BUY limit order at 115243.9.
+2025-09-12 22:11:30,229 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:30,229 INFO:Placing SELL limit order at 4553.82 and BUY limit order at 4553.76.
+2025-09-12 22:11:30,232 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:30,384 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:30,387 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:30,387 INFO:Placing SELL limit order at 115244.6 and BUY limit order at 115243.8.
+2025-09-12 22:11:30,828 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:30,829 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:30,829 INFO:Placing SELL limit order at 4553.83 and BUY limit order at 4553.75.
+2025-09-12 22:11:30,988 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:31,138 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:31,139 INFO:Placing SELL limit order at 4553.84 and BUY limit order at 4553.74.
+2025-09-12 22:11:31,255 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:31,256 INFO:Placing SELL limit order at 115244.7 and BUY limit order at 115243.7.
+2025-09-12 22:11:31,289 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:31,409 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:31,447 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:31,565 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:32,726 DEBUG:Position for BTCUSDT: 0.0
+2025-09-12 22:11:32,727 INFO:Current position is FLAT for BTCUSDT
+2025-09-12 22:11:32,727 INFO:No open positions for BTCUSDT. Drawing grid...
+2025-09-12 22:11:32,871 DEBUG:Position for ETHUSDT: 0.0
+2025-09-12 22:11:32,872 INFO:Current position is FLAT for ETHUSDT
+2025-09-12 22:11:32,872 INFO:No open positions for ETHUSDT. Drawing grid...
+2025-09-12 22:11:32,884 DEBUG:Mark price for BTCUSDT: 115225.9
+2025-09-12 22:11:32,884 INFO:Drawing grid with 5 levels at tick size intervals (0.1).
+2025-09-12 22:11:32,885 INFO:Placing SELL limit order at 115226.0 and BUY limit order at 115225.7.
+2025-09-12 22:11:33,037 DEBUG:Mark price for ETHUSDT: 4554.08
+2025-09-12 22:11:33,037 INFO:Drawing grid with 5 levels at tick size intervals (0.01).
+2025-09-12 22:11:33,038 INFO:Placing SELL limit order at 4554.09 and BUY limit order at 4554.07.
+2025-09-12 22:11:33,040 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:33,188 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:33,339 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:33,339 INFO:Placing SELL limit order at 4554.1 and BUY limit order at 4554.05.
+2025-09-12 22:11:33,463 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:33,464 INFO:Placing SELL limit order at 115226.0 and BUY limit order at 115225.7.
+2025-09-12 22:11:33,491 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:33,626 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:33,922 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:33,922 INFO:Placing SELL limit order at 115226.2 and BUY limit order at 115225.5.
+2025-09-12 22:11:34,072 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:34,073 INFO:Placing SELL limit order at 4554.11 and BUY limit order at 4554.05.
+2025-09-12 22:11:34,108 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:34,565 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:34,566 INFO:Placing SELL limit order at 115226.2 and BUY limit order at 115225.5.
+2025-09-12 22:11:34,568 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:34,987 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:34,988 INFO:Placing SELL limit order at 4554.12 and BUY limit order at 4554.04.
+2025-09-12 22:11:34,992 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:35,141 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:35,148 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:35,149 INFO:Placing SELL limit order at 115226.4 and BUY limit order at 115225.4.
+2025-09-12 22:11:35,314 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:35,468 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:35,575 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:35,576 INFO:Placing SELL limit order at 4554.13 and BUY limit order at 4554.03.
+2025-09-12 22:11:35,729 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:35,878 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:36,623 DEBUG:Position for BTCUSDT: 0.0
+2025-09-12 22:11:36,625 INFO:Current position is FLAT for BTCUSDT
+2025-09-12 22:11:36,626 INFO:No open positions for BTCUSDT. Drawing grid...
+2025-09-12 22:11:37,037 DEBUG:Position for ETHUSDT: 0.0
+2025-09-12 22:11:37,037 INFO:Current position is FLAT for ETHUSDT
+2025-09-12 22:11:37,038 INFO:No open positions for ETHUSDT. Drawing grid...
+2025-09-12 22:11:37,043 DEBUG:Mark price for BTCUSDT: 115220.0
+2025-09-12 22:11:37,044 INFO:Drawing grid with 5 levels at tick size intervals (0.1).
+2025-09-12 22:11:37,044 INFO:Placing SELL limit order at 115220.1 and BUY limit order at 115219.9.
+2025-09-12 22:11:37,194 DEBUG:Mark price for ETHUSDT: 4553.47724806
+2025-09-12 22:11:37,194 INFO:Drawing grid with 5 levels at tick size intervals (0.01).
+2025-09-12 22:11:37,195 INFO:Placing SELL limit order at 4553.48 and BUY limit order at 4553.46.
+2025-09-12 22:11:37,199 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,347 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,353 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,354 INFO:Placing SELL limit order at 115220.2 and BUY limit order at 115219.8.
+2025-09-12 22:11:37,528 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,529 INFO:Placing SELL limit order at 4553.49 and BUY limit order at 4553.45.
+2025-09-12 22:11:37,530 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,683 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,685 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,686 INFO:Placing SELL limit order at 115220.3 and BUY limit order at 115219.7.
+2025-09-12 22:11:37,837 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,838 INFO:Placing SELL limit order at 4553.5 and BUY limit order at 4553.44.
+2025-09-12 22:11:37,843 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:37,988 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,011 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,011 INFO:Placing SELL limit order at 115220.4 and BUY limit order at 115219.6.
+2025-09-12 22:11:38,210 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,211 INFO:Placing SELL limit order at 4553.51 and BUY limit order at 4553.43.
+2025-09-12 22:11:38,212 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,366 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,368 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,369 INFO:Placing SELL limit order at 115220.5 and BUY limit order at 115219.5.
+2025-09-12 22:11:38,524 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,525 INFO:Placing SELL limit order at 4553.52 and BUY limit order at 4553.42.
+2025-09-12 22:11:38,540 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,682 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,839 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:38,976 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:40,012 DEBUG:Position for ETHUSDT: 0.0
+2025-09-12 22:11:40,012 INFO:Current position is FLAT for ETHUSDT
+2025-09-12 22:11:40,012 INFO:No open positions for ETHUSDT. Drawing grid...
+2025-09-12 22:11:40,132 DEBUG:Position for BTCUSDT: 0.0
+2025-09-12 22:11:40,132 INFO:Current position is FLAT for BTCUSDT
+2025-09-12 22:11:40,133 INFO:No open positions for BTCUSDT. Drawing grid...
+2025-09-12 22:11:40,164 DEBUG:Mark price for ETHUSDT: 4553.5
+2025-09-12 22:11:40,164 INFO:Drawing grid with 5 levels at tick size intervals (0.01).
+2025-09-12 22:11:40,164 INFO:Placing SELL limit order at 4553.51 and BUY limit order at 4553.49.
+2025-09-12 22:11:40,284 DEBUG:Mark price for BTCUSDT: 115220.0
+2025-09-12 22:11:40,284 INFO:Drawing grid with 5 levels at tick size intervals (0.1).
+2025-09-12 22:11:40,284 INFO:Placing SELL limit order at 115220.1 and BUY limit order at 115219.9.
+2025-09-12 22:11:40,338 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:40,441 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:40,490 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:40,491 INFO:Placing SELL limit order at 4553.52 and BUY limit order at 4553.48.
+2025-09-12 22:11:40,645 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:40,866 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:40,866 INFO:Placing SELL limit order at 115220.2 and BUY limit order at 115219.8.
+2025-09-12 22:11:41,064 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,064 INFO:Placing SELL limit order at 4553.53 and BUY limit order at 4553.47.
+2025-09-12 22:11:41,213 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,288 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,366 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,366 INFO:Placing SELL limit order at 4553.54 and BUY limit order at 4553.46.
+2025-09-12 22:11:41,459 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,459 INFO:Placing SELL limit order at 115220.3 and BUY limit order at 115219.7.
+2025-09-12 22:11:41,522 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,615 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,772 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,775 INFO:Placing SELL limit order at 115220.4 and BUY limit order at 115219.6.
+2025-09-12 22:11:41,929 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,943 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:41,944 INFO:Placing SELL limit order at 4553.55 and BUY limit order at 4553.45.
+2025-09-12 22:11:42,099 ERROR:Binance API Error placing SELL order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:42,255 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:42,366 ERROR:Binance API Error placing BUY order: APIError(code=-2019): Margin is insufficient.
+2025-09-12 22:11:42,366 INFO:Placing SELL limit order at 115220.5 and BUY limit order at 115219.5.
